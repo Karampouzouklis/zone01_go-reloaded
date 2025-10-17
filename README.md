@@ -1,12 +1,47 @@
-# Go-Reloaded Project
+# Go-Reloaded
 
-## Analysis Document
+A text manipulation tool that processes input files and applies various transformation rules to produce formatted output.
 
-### Problem Description
+## Installation
 
-It is a text manipulation tool. It takes an input text file *(given as the first argument)*, modifies the text based on the **modification rules** and outputs the modified text in an output file *(given as the second argument)*.
+```bash
+go build -o go-reloaded
+```
 
-### Modification Rules
+## Usage
+
+```bash
+# Using built binary
+./go-reloaded input.txt output.txt
+
+# Or run directly
+go run . input.txt output.txt
+```
+
+The program takes an input text file (first argument), applies transformation rules, and writes the result to an output file (second argument).
+
+### Example
+
+```bash
+$ echo "Simply add 42 (hex) and 10 (bin) and you will see the result is 68." > sample.txt
+$ go run . sample.txt result.txt
+$ cat result.txt
+Simply add 66 and 2 and you will see the result is 68.
+```
+
+## Requirements
+
+- Go 1.24.7 or higher
+
+## Testing
+
+```bash
+go test ./...
+```
+
+## Features
+
+### Transformation Rules
 
 - Every instance of `(hex)` should replace the word before with the decimal version of the word (in this case the word will always be a hexadecimal number). (Ex: "1E (hex) files were added" -> "30 files were added")
 - Every instance of `(bin)` should replace the word before with the decimal version of the word (in this case the word will always be a binary number). (Ex: "It has been 10 (bin) years" -> "It has been 2 years")
@@ -22,11 +57,16 @@ It is a text manipulation tool. It takes an input text file *(given as the first
   - If there are more than one word between the two `' '` marks, the program should place the marks next to the corresponding words (Ex: "As Elton John said: ' I am the most well-known homosexual in the world '" -> "As Elton John said: 'I am the most well-known homosexual in the world'")
 - Every instance of `a` should be turned into `an` if the next word begins with a vowel (`a`, `e`, `i`, `o`, `u`) or a `h`. (Ex: "There it was. A amazing rock!" -> "There it was. An amazing rock!").
 
-### Architectures
-#### Comparing `Pipeline` and `Streaming FSM (Finite State Machine)`
-#### Choice for this project
+## Architecture Analysis
 
-## Golden Test Set (Success Test Cases)
+### Comparing `Pipeline` and `Streaming FSM (Finite State Machine)`
+
+Lorem Ipsuim
+
+### Choice for this project
+Lorem Ipsum
+
+## Test Cases
 
 ### FUNCTIONAL TEST CASES
 
@@ -52,8 +92,7 @@ Input: harold wilson (cap, 2) : ' I am a optimist ,but a optimist who carries a 
 Expected: Harold Wilson: 'I am an optimist, but an optimist who carries a raincoat.'
 ```
 
-
-### 5 original tricky examples
+### ORIGINAL TRICKY EXAMPLES
 
 #### 1. Transformation markers inside quotes
 ```
@@ -83,7 +122,16 @@ Expected?: She said 'an elephant, an' unusual 'animal, is here'. -OR- She said '
 ```
 **Why tricky:** The instructions don't specify how to handle nested quotes. Should they be treated as one outer pair with inner text, or as separate quote pairs?
 
-### Paragraph full of transformation rules
+### TEXT WITH TRANSFORMATION RULES
 ```
 When developing a text processing application ,you must understand that ff (hex) different algorithms exist for parsing . A experienced (cap) programmer knows that 1010 (bin) main approaches (up, 2) can be used: streaming parsers and batch processors . The streaming approach processes data ' character by character ' while batch processing loads everything into memory first ... However ,both methods have trade-offs ! Streaming uses less memory but batch processing is often faster ? The choice depends on your specific requirements : memory constraints ,performance needs ,and data size . For instance ,if you need to process a HUGE file containing 1a (hex) million records ,streaming might be BETTER (low, 2) for memory usage . Remember that a efficient algorithm should handle edge cases gracefully ... What happens when you encounter malformed input !? Your parser should be ROBUST ENOUGH (low, 2) to continue processing . As donald knuth (cap, 2) said : ' premature optimization is the root of all evil ' in programming . Focus on correctness first ,then optimize . Whether you choose 101 (bin) different data structures or stick to basic arrays ,make sure your code is readable and maintainable . Additionally ,consider that 1f (hex) different optimization techniques (up, 2) exist for performance tuning ... Some developers prefer a object-oriented (cap, 3) approach while others favor functional programming !? The key is understanding your data flow : input validation ,transformation logic ,and output formatting . Modern compilers can optimize 1100 (bin) percent of simple operations automatically . However ,complex algorithms still require careful design ... Remember that a elegant (up) solution often beats a brute-force approach ! When working with large datasets containing abc (hex) thousand entries ,consider using parallel processing . As Linus Torvalds once said : ' talk is cheap ,show me the code ' . Whether you implement 11 (bin) different parsing strategies or just one robust solution ,always test thoroughly with edge cases .
 ```
+
+## Building from Source
+
+```bash
+git clone <repository-url>
+cd go-reloaded
+go build -o go-reloaded
+```
+
