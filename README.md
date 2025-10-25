@@ -51,123 +51,24 @@ Simply add 66 and 2 and you will see the result is 68.
   - If there are more than one word between the two `' '` marks, the program should place the marks next to the corresponding words (Ex: "As Elton John said: ' I am the most well-known homosexual in the world '" -> "As Elton John said: 'I am the most well-known homosexual in the world'")
 - Every instance of `a` should be turned into `an` if the next word begins with a vowel (`a`, `e`, `i`, `o`, `u`) or a `h`. (Ex: "There it was. A amazing rock!" -> "There it was. An amazing rock!").
 
-## Architecture Analysis
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture analysis and design decisions.
 
-### Comparing `Pipeline` and `Streaming FSM (Finite State Machine)`
-
-#### Pipeline (multi-stage)
-A multi-stage pipeline splits the work into clear passes:
- - A tokenizer that turns raw characters into tokens (words, punctuation, transformation commands)
- - Transformation stages that each perform a single responsibility (e.g., hex/bin → decimal, case changes, article correction, quote normalization)
- - A formatter that serializes tokens into output text.
- This approach favors simplicity and clarity: each stage is easy to implement and unit-test, the code is easy to read, and ordering is explicit.
- The trade-off is extra passes over the data, but for the small inputs expected in this project that cost is negligible compared to the gains in maintainability.
-
-#### Streaming FSM (single-pass)
-A streaming finite-state machine works by applying rules as they are read in a single pass.
-It can be more memory-efficient and fast for very large files, but the FSM quickly grows complex when handling many interacting rules (multi-word markers, quotes, punctuation grouping).
-That complexity makes the code harder to implement correctly, harder to test, and harder to extend.
-
-### Chosen approach
-
-For this project I choose the multi-stage pipeline.
-It provides the cleanest, most maintainable and modular implementation, automatically adhering to best coding practices like single responsibility, cleaner code, easier to read, debug, extend and test.
-If later optimization is needed, stages can be merged to handle the stream in less passes.
-  
+See [docs/TEST_CASES.md](docs/TEST_CASES.md) for comprehensive test cases and examples.
 
 
-## Test Cases
 
-### FUNCTIONAL TEST CASES
+## Project Structure
 
-#### Input and expected output
+This project follows professional development practices:
 
-```
-Input: If I make you BREAKFAST IN BED (low, 3) just say thank you instead of: how (cap) did you get in my house (up, 2) ?
-Expected: If I make you breakfast in bed just say thank you instead of: How did you get in MY HOUSE?
-```
+- `docs/` - Architecture and operational documentation
+- `tasks/` - Implementation tasks with learning objectives
+- `.github/` - GitHub templates and workflows
+- `AGENTS.md` - AI agent instructions
+- `CONTRIBUTING.md` - Contribution guidelines
+- `RELEASE.md` - Release process documentation
 
-```
-Input: I have to pack 101 (bin) outfits. Packed 1a (hex) just to be sure
-Expected: I have to pack 5 outfits. Packed 26 just to be sure
-```
-
-```
-Input: Don not be sad ,because sad backwards is das . And das not good
-Expected: Don not be sad, because sad backwards is das. And das not good
-```
-
-```
-Input: harold wilson (cap, 2) : ' I am a optimist ,but a optimist who carries a raincoat . '
-Expected: Harold Wilson: 'I am an optimist, but an optimist who carries a raincoat.'
-```
-
-### ORIGINAL TRICKY EXAMPLES
-
-#### 1. Transformation markers inside quotes
-```
-Input: He said ' I want 1a (hex) apples (up, 2) ' today .
-Expected: He said 'I want 26 APPLES' today.
-```
-**Why tricky:** Tests whether transformation markers `(hex)` and `(up, 2)` work when they appear inside quotes. The implementation must handle quote pairing while still processing transformations within the quoted text.
-
-#### 2. Multiple consecutive punctuation groups with spacing
-```
-Input: Wait ... What !? No way !! Are you serious ... ?
-Expected: Wait... What!? No way!! Are you serious...?
-```
-**Why tricky:** Tests complex punctuation grouping rules. `...` and `!?` are groups (no space before), but `!!` and `...?` need to be handled correctly. The challenge is identifying what constitutes a "group" versus separate punctuation.
-
-#### 3. Overlapping multi-word transformations
-```
-Input: Make these THREE WORDS (low, 2) very (up, 3) important
-Expected?: Make these THREE WORDS VERY important -OR- Make these three words VERY important
-```
-**Why tricky:** The `(low, 2)` affects "THREE WORDS" and `(up, 3)` affects "three WORDS VERY". This tests how overlapping transformation ranges are handled, in what order will the transformations be executed?
-
-#### 4. Article + quoted word + transformation
-```
-Input: It was a 'honest (cap)' decision .
-Expected: It was an 'Honest' decision.
-```
-**Why tricky:** The article correction (`a` → `an`) must look at the next word even when it's inside quotes and will be modified by a marker `(cap)`. Quotes remove internal spaces and the capitalization marker changes the first letter — the implementation must apply markers and quote formatting in the right order so the article rule sees the correct next-word initial.
-  
-
-#### 5. Markers adjacent to punctuation / no-space cases
-```
-Input: Make it loud(up)!
-Expected: Make it LOUD!
-```
-**Why tricky:** Ensures markers apply to the correct preceding token even when followed immediately by punctuation (no separating space). Also verifies that punctuation attaches to the transformed token correctly.
-
-
-### TEXT WITH TRANSFORMATION RULES
-```
-When developing a text processing application ,you must understand that ff (hex) different algorithms exist for parsing . A experienced (cap) programmer knows that 1010 (bin) main approaches (up, 2) can be used: streaming parsers and batch processors . The streaming approach processes data ' character by character ' while batch processing loads everything into memory first ... However ,both methods have trade-offs ! Streaming uses less memory but batch processing is often faster ? The choice depends on your specific requirements : memory constraints ,performance needs ,and data size . For instance ,if you need to process a HUGE file containing 1a (hex) million records ,streaming might be BETTER (low, 2) for memory usage . Remember that a efficient algorithm should handle edge cases gracefully ... What happens when you encounter malformed input !? Your parser should be ROBUST ENOUGH (low, 2) to continue processing . As donald knuth (cap, 2) said : ' premature optimization is the root of all evil ' in programming . Focus on correctness first ,then optimize . Whether you choose 101 (bin) different data structures or stick to basic arrays ,make sure your code is readable and maintainable . Additionally ,consider that 1f (hex) different optimization techniques (up, 2) exist for performance tuning ... Some developers prefer a object-oriented (cap, 3) approach while others favor functional programming !? The key is understanding your data flow : input validation ,transformation logic ,and output formatting . Modern compilers can optimize 1100 (bin) percent of simple operations automatically . However ,complex algorithms still require careful design ... Remember that a elegant (up) solution often beats a brute-force approach ! When working with large datasets containing abc (hex) thousand entries ,consider using parallel processing . As Linus Torvalds once said : ' talk is cheap ,show me the code ' . Whether you implement 11 (bin) different parsing strategies or just one robust solution ,always test thoroughly with edge cases .
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## Testing
-
-```bash
-# Run all tests
-go test ./...
-
-# Run tests with verbose output
-go test -v ./...
-
-# Run tests with coverage
-go test -cover ./...
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development guidelines.
 
 ## License
 
@@ -176,6 +77,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Author
 
 - **Nikos Doulfis** - [Zone01 Gitea Profile](https://platform.zone01.gr/git/ndoulfis/)
+
+## Project Status
+
+🚧 **In Development** - Following TDD approach with incremental task completion
+
+See `tasks/` directory for implementation progress and learning objectives.
 
 ## Acknowledgments
 

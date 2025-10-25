@@ -1,3 +1,7 @@
+# Requirements
+
+*Original exercise specification from Zone01 curriculum*
+
 ## go-reloaded
 
 Welcome back. Congratulations on your admission. We knew you would make it. Now it is time to get into projects.

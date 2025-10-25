@@ -26,9 +26,10 @@ Use multi-stage pipeline approach:
 ## TDD Requirements
 - **Always write tests first** before implementation
 - Each transformation rule must have comprehensive unit tests
-- Test all examples from README.md
+- Test all examples from docs/TEST_CASES.md
 - Test edge cases and error conditions
 - Ensure 100% test coverage for transformation logic
+- Follow testing procedures in docs/ops/testing.md
 
 ## Transformation Rules Implementation
 Process in this order:
@@ -46,6 +47,14 @@ Process in this order:
 - Use table-driven tests for multiple test cases
 - Run tests before every commit
 
+## Project Documentation
+- `docs/REQUIREMENTS.md` - Original exercise specifications
+- `docs/ARCHITECTURE.md` - Technical design decisions and patterns
+- `docs/TEST_CASES.md` - Comprehensive test examples and edge cases
+- `docs/ops/testing.md` - Testing procedures and quality gates
+- `tasks/` - Implementation roadmap with learning objectives
+- `CONTRIBUTING.md` - Development workflow and guidelines
+
 ## File Structure
 ```
 go-reloaded/
@@ -53,6 +62,8 @@ go-reloaded/
 ├── tokenizer/           # Text tokenization
 ├── transformers/        # Individual transformation stages
 ├── formatter/           # Output formatting
+├── docs/                # Project documentation
+├── tasks/               # Implementation tasks
 └── *_test.go           # Test files alongside implementation
 ```
 
@@ -61,6 +72,13 @@ go-reloaded/
 - Continue processing when encountering invalid hex/binary numbers
 - Provide meaningful error messages for file I/O issues
 - Never panic on user input
+
+## Implementation Guidance
+- Follow task-based development approach in tasks/ directory
+- Each task includes learning objectives and references
+- Refer to docs/ARCHITECTURE.md for design patterns
+- Use docs/TEST_CASES.md for validation examples
+- Follow TDD cycle: Red → Green → Refactor
 
 ## Performance Notes
 - Pipeline approach prioritizes maintainability over performance
