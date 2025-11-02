@@ -76,7 +76,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-- **Nikos Doulfis** - [Zone01 Gitea Profile](https://platform.zone01.gr/git/ndoulfis/)
+- **Nikos Doulfis** - [Github Profile](https://github.com/Karampouzouklis)
 
 ## Project Status
 
