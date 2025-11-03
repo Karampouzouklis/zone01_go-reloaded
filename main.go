@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"go-reloaded/tokenizer"
 )
 
 func main() {
@@ -26,11 +27,18 @@ func run(args []string) error {
 		return fmt.Errorf("failed to read input file '%s': %v", inputFile, err)
 	}
 
-	// For now, just copy input to output (we'll add transformations later)
+	// Tokenize the input text
 	text := string(content)
+	tokens := tokenizer.Tokenize(text)
+	
+	// For now, reconstruct text from tokens (demonstrating tokenizer works)
+	result := ""
+	for _, token := range tokens {
+		result += token.Value
+	}
 	
 	// Write to output file
-	err = os.WriteFile(outputFile, []byte(text), 0644)
+	err = os.WriteFile(outputFile, []byte(result), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write output file '%s': %v", outputFile, err)
 	}
