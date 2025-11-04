@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"go-reloaded/tokenizer"
+	"go-reloaded/transform"
 )
 
 func main() {
@@ -31,7 +32,10 @@ func run(args []string) error {
 	text := string(content)
 	tokens := tokenizer.Tokenize(text)
 	
-	// For now, reconstruct text from tokens (demonstrating tokenizer works)
+	// Apply transformations
+	tokens = transform.ProcessTokens(tokens)
+	
+	// Reconstruct text from transformed tokens
 	result := ""
 	for _, token := range tokens {
 		result += token.Value
