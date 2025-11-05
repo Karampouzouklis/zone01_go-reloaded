@@ -98,20 +98,10 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 			}
 			
 			if wordIndex >= 0 {
-				word := tokens[wordIndex].Value
-				var transformed string
-				
-				switch token.Marker {
-				case "up":
-					transformed = strings.ToUpper(word)
-				case "low":
-					transformed = strings.ToLower(word)
-				case "cap":
-					if len(word) > 0 {
-						transformed = strings.ToUpper(word[:1]) + strings.ToLower(word[1:])
-					} else {
-						transformed = word
-					}
+				// Determine how many words to transform
+				count := token.Count
+				if count == 0 {
+					count = 1
 				}
 				
 				// Remove whitespace before marker from result
@@ -119,14 +109,31 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 					result = result[:len(result)-1]
 				}
 				
-				// Find and replace the word in result
-				for k := len(result) - 1; k >= 0; k-- {
-					if result[k].Type == tokenizer.Word && result[k].Value == word {
+				// Transform the specified number of words backward
+				wordsTransformed := 0
+				for k := len(result) - 1; k >= 0 && wordsTransformed < count; k-- {
+					if result[k].Type == tokenizer.Word {
+						word := result[k].Value
+						var transformed string
+						
+						switch token.Marker {
+						case "up":
+							transformed = strings.ToUpper(word)
+						case "low":
+							transformed = strings.ToLower(word)
+						case "cap":
+							if len(word) > 0 {
+								transformed = strings.ToUpper(word[:1]) + strings.ToLower(word[1:])
+							} else {
+								transformed = word
+							}
+						}
+						
 						result[k] = tokenizer.Token{
 							Type:  tokenizer.Word,
 							Value: transformed,
 						}
-						break
+						wordsTransformed++
 					}
 				}
 				

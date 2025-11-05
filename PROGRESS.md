@@ -29,7 +29,7 @@
 - `tasks/TASK-*.md` - Step-by-step implementation roadmap
 - `CONTRIBUTING.md` - Development workflow and guidelines
 
-## Current Status: TASK-006 (Multi-word Case Transformations) - Ready to Start
+## Current Status: TASK-007 (Punctuation Formatting) - Ready to Start
 
 ### Completed Tasks
 - ✅ **TASK-001: Project Setup and Basic Structure**
@@ -76,13 +76,22 @@
   - Successfully integrated with existing pipeline
   - **Key Learning**: Switch statements, string manipulation, string slicing
 
-### Current Task: TASK-006 - Multi-word Case Transformations
+- ✅ **TASK-006: Multi-word Case Transformations**
+  - Extended `processCaseTransformations()` to handle counted markers (up, 2), (low, 3), (cap, 1)
+  - Implemented backward word traversal with bounds checking
+  - Added count parameter handling with default to 1 for single words
+  - Maintains backward compatibility with existing single-word functionality
+  - All multi-word transformation tests passing (4 new + all existing tests)
+  - Successfully integrated with existing pipeline
+  - **Key Learning**: Loop control with counters, bounds checking, extending existing functions
+
+### Current Task: TASK-007 - Punctuation Formatting
 **Status**: Ready to start implementation
 **Next Steps**: 
-1. Implement counted markers like (up, 2), (low, 3), (cap, 1)
-2. Extend case transformation function to handle multiple words
-3. Add comprehensive multi-word transformation tests
-4. Integrate with existing single-word case transformations
+1. Implement punctuation spacing rules for .,!?:;
+2. Handle punctuation positioning (close to previous word, space after)
+3. Add comprehensive punctuation formatting tests
+4. Integrate with existing transformation pipeline
 
 ### Files Created/Modified
 - `main.go` - Entry point with file I/O, error handling, tokenizer and transform integration
@@ -142,6 +151,14 @@
 34. **Edge Case Handling**: Checking string length before slicing operations
 35. **Pattern Consistency**: Reusing same function structure across transformations
 
+#### TASK-006: Loop Control & Function Extension
+36. **Loop Control with Counters**: Using `wordsTransformed` counter with loop conditions
+37. **Bounds Checking**: Preventing array access errors with `k >= 0 && wordsTransformed < count`
+38. **Backward Traversal**: Processing tokens in reverse order for multi-word operations
+39. **Function Extension**: Adding functionality to existing functions without breaking changes
+40. **Default Values**: Using `if count == 0 { count = 1 }` for backward compatibility
+41. **Nested Loops**: Combining outer token loop with inner word transformation loop
+
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
 - **Separation of Concerns**: Each transformation is a separate function with single responsibility
@@ -157,8 +174,8 @@
 - **Justification**: Learning project prioritizes understanding over optimization
 
 ### Upcoming Tasks (Roadmap)
-- TASK-006: Multi-word Case Transformations (current)
-- TASK-007: Punctuation Formatting
+- TASK-007: Punctuation Formatting (current)
+- TASK-008: Punctuation Groups
 - TASK-007: Punctuation Formatting
 - TASK-008: Punctuation Groups
 - TASK-009: Quote Handling
@@ -167,7 +184,7 @@
 - TASK-012: Complex Integration Testing
 - TASK-013: Performance Final Validation
 
-### Test Results
+### Test Results & Coverage
 ```
 === RUN   TestRun
 === RUN   TestRun/valid_arguments
@@ -190,6 +207,13 @@ PASS
 ok  	go-reloaded/tokenizer	0.005s
 ```
 
+**Coverage Analysis (using `go test -cover ./...`):**
+- **Overall**: 93.6% statement coverage
+- **Main package**: 80.0% (run function: 94.1%, main function: 0% - expected)
+- **Tokenizer**: 97.4% (excellent coverage)
+- **Transform**: 95.5% (excellent coverage)
+- **Quality**: Exceeds industry standard (>90%) for learning projects
+
 ### Current Working Directory
 `go-reloaded/` (project root)
 
@@ -211,22 +235,22 @@ ok  	go-reloaded/tokenizer	0.005s
 **Justification**: Learning Go fundamentals, design patterns, and best practices is more valuable than micro-optimizations at this stage.
 
 ### Last Session Notes
-- ✅ Successfully completed TASK-005: Basic Case Transformations
-- Implemented `processCaseTransformations()` with switch statement for clean case handling
-- Applied string manipulation functions: `strings.ToUpper()`, `strings.ToLower()`
-- Implemented manual capitalization using string slicing: `word[:1]` + `word[1:]`
-- Added comprehensive test coverage (21 total test cases across all functions)
-- All tests passing including integration tests with mixed transformations
-- **Key insight**: Pattern consistency across transformation functions
-- Learned string slicing, edge case handling, and switch statements
-- Pipeline architecture continues to work beautifully with composable transformations
-- Following TDD methodology with honest evaluation approach
+- ✅ Successfully completed TASK-006: Multi-word Case Transformations
+- Extended existing `processCaseTransformations()` function to handle counted markers
+- Implemented backward word traversal with `wordsTransformed` counter and bounds checking
+- Added default count handling for backward compatibility (count=0 becomes count=1)
+- All tests passing (25 total test cases including 4 new multi-word tests)
+- **Key insight**: Single function approach works well - same logic, just different loop count
+- Learned loop control with counters, bounds checking, and function extension techniques
+- Integration testing successful - "This is so exciting (up, 2)" → "This is SO EXCITING"
+- Pipeline architecture continues to work beautifully with extended functionality
+- Following TDD methodology with immediate PROGRESS.md updates
 
 ### Next Session Instructions
-1. Continue with TASK-006: Implement multi-word case transformations (up, 2), (low, 3), (cap, 1)
-2. Extend case transformation function to handle counted markers
-3. Implement backward word traversal for multi-word processing
-4. Write comprehensive tests for multi-word transformations
+1. Continue with TASK-007: Implement punctuation formatting for .,!?:;
+2. Add punctuation positioning rules (close to previous word, space after)
+3. Handle punctuation spacing and formatting requirements
+4. Write comprehensive tests for punctuation formatting
 5. Maintain step-by-step Go learning approach with explanations
 
 ### Session Restoration Command
@@ -240,5 +264,6 @@ ok  	go-reloaded/tokenizer	0.005s
 - **Architecture**: Follow multi-stage pipeline with maximum separation of concerns
 - **Compliance**: Must satisfy all transformation rules from README.md
 - **Quality**: All tests must pass before moving to next task
+- **Coverage**: Use `go test -cover ./...` to monitor test coverage (target: >90%)
 - **Learning Priority**: Simplicity, readability, modularity over performance optimization
 - **Honest Evaluation**: Provide critical feedback, acknowledge trade-offs, explain best practices

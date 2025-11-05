@@ -27,6 +27,10 @@ func TestProcessTokens(t *testing.T) {
 		{"capitalize", "word (cap)", "Word"},
 		{"mixed case low", "WoRd (low)", "word"},
 		{"single char up", "a (up)", "A"},
+		{"multi-word up", "this is exciting (up, 2)", "this IS EXCITING"},
+		{"multi-word low", "BREAKFAST IN BED (low, 3)", "breakfast in bed"},
+		{"multi-word cap", "hello world test (cap, 2)", "hello World Test"},
+		{"count too large", "word (up, 5)", "WORD"},
 	}
 
 	for _, tt := range tests {
