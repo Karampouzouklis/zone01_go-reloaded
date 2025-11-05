@@ -8,9 +8,8 @@ import (
 
 // ProcessTokens applies all transformations in pipeline order
 func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
-	tokens = processHexConversion(tokens)
+	tokens = processNumberConversion(tokens)
 	// Future transformations will be added here:
-	// tokens = processBinaryConversion(tokens)
 	// tokens = processCaseTransformations(tokens)
 	// tokens = processPunctuation(tokens)
 	// tokens = processQuotes(tokens)
@@ -18,15 +17,15 @@ func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
 	return tokens
 }
 
-// processHexConversion converts hex numbers to decimal
-func processHexConversion(tokens []tokenizer.Token) []tokenizer.Token {
+// processNumberConversion converts hex and binary numbers to decimal
+func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
 	
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
 		
-		if token.Type == tokenizer.Marker && token.Marker == "hex" {
+		if token.Type == tokenizer.Marker && (token.Marker == "hex" || token.Marker == "bin") {
 			// Find the previous word token (skip whitespace)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
@@ -39,8 +38,14 @@ func processHexConversion(tokens []tokenizer.Token) []tokenizer.Token {
 			}
 			
 			if wordIndex >= 0 {
-				// Convert hex to decimal
-				if decimal, err := strconv.ParseInt(tokens[wordIndex].Value, 16, 64); err == nil {
+				// Determine base: hex=16, bin=2
+				base := 16
+				if token.Marker == "bin" {
+					base = 2
+				}
+				
+				// Convert to decimal
+				if decimal, err := strconv.ParseInt(tokens[wordIndex].Value, base, 64); err == nil {
 					// Remove whitespace before marker from result
 					for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 						result = result[:len(result)-1]
@@ -57,7 +62,7 @@ func processHexConversion(tokens []tokenizer.Token) []tokenizer.Token {
 						}
 					}
 					
-					// Skip the hex marker
+					// Skip the marker
 					i++
 					continue
 				}
