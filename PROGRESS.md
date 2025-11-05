@@ -29,7 +29,7 @@
 - `tasks/TASK-*.md` - Step-by-step implementation roadmap
 - `CONTRIBUTING.md` - Development workflow and guidelines
 
-## Current Status: TASK-005 (Basic Case Transformations) - Ready to Start
+## Current Status: TASK-006 (Multi-word Case Transformations) - Ready to Start
 
 ### Completed Tasks
 - ✅ **TASK-001: Project Setup and Basic Structure**
@@ -67,13 +67,22 @@
   - Successfully integrated with existing pipeline
   - **Key Learning**: Code refactoring, function generalization, DRY principle
 
-### Current Task: TASK-005 - Basic Case Transformations
+- ✅ **TASK-005: Basic Case Transformations**
+  - Implemented `processCaseTransformations()` function for (up), (low), (cap) markers
+  - Used switch statement for clean case handling
+  - Applied `strings.ToUpper()`, `strings.ToLower()`, manual capitalization
+  - Handles edge cases (empty strings, single characters)
+  - All case transformation tests passing (6 dedicated + 5 integration tests)
+  - Successfully integrated with existing pipeline
+  - **Key Learning**: Switch statements, string manipulation, string slicing
+
+### Current Task: TASK-006 - Multi-word Case Transformations
 **Status**: Ready to start implementation
 **Next Steps**: 
-1. Implement (up), (low), (cap) transformations
-2. Add case transformation functions to transform package
-3. Add comprehensive case transformation tests
-4. Integrate with existing number conversion pipeline
+1. Implement counted markers like (up, 2), (low, 3), (cap, 1)
+2. Extend case transformation function to handle multiple words
+3. Add comprehensive multi-word transformation tests
+4. Integrate with existing single-word case transformations
 
 ### Files Created/Modified
 - `main.go` - Entry point with file I/O, error handling, tokenizer and transform integration
@@ -125,6 +134,14 @@
 28. **Architecture Evolution**: Recognizing patterns and eliminating duplication
 29. **Multi-base Conversion**: `strconv.ParseInt(value, base, 64)` with dynamic base
 
+#### TASK-005: String Manipulation & Control Flow
+30. **Switch Statements**: Clean alternative to multiple `if-else` statements
+31. **String Case Functions**: `strings.ToUpper()`, `strings.ToLower()`
+32. **String Slicing**: `word[:1]` and `word[1:]` for accessing parts of strings
+33. **String Concatenation**: Combining string parts for capitalization
+34. **Edge Case Handling**: Checking string length before slicing operations
+35. **Pattern Consistency**: Reusing same function structure across transformations
+
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
 - **Separation of Concerns**: Each transformation is a separate function with single responsibility
@@ -140,9 +157,8 @@
 - **Justification**: Learning project prioritizes understanding over optimization
 
 ### Upcoming Tasks (Roadmap)
-- TASK-005: Basic Case Transformations (current)
-- TASK-006: Multi-word Case Transformations
-- TASK-006: Multi-word Case Transformations
+- TASK-006: Multi-word Case Transformations (current)
+- TASK-007: Punctuation Formatting
 - TASK-007: Punctuation Formatting
 - TASK-008: Punctuation Groups
 - TASK-009: Quote Handling
@@ -195,21 +211,22 @@ ok  	go-reloaded/tokenizer	0.005s
 **Justification**: Learning Go fundamentals, design patterns, and best practices is more valuable than micro-optimizations at this stage.
 
 ### Last Session Notes
-- ✅ Successfully completed TASK-004: Binary Conversion with architectural improvement
-- **MAJOR REFACTORING**: Unified hex and binary conversion into single function
-- Applied DRY principle - eliminated code duplication through function generalization
-- Implemented dynamic base selection (hex=16, bin=2) in `processNumberConversion()`
-- All tests passing (11 test cases covering both hex and binary)
-- **Key insight**: Recognized pattern similarity and combined related functionality
-- Learned code refactoring techniques and architectural evolution
-- Integration testing successful - both conversions work in same input
+- ✅ Successfully completed TASK-005: Basic Case Transformations
+- Implemented `processCaseTransformations()` with switch statement for clean case handling
+- Applied string manipulation functions: `strings.ToUpper()`, `strings.ToLower()`
+- Implemented manual capitalization using string slicing: `word[:1]` + `word[1:]`
+- Added comprehensive test coverage (21 total test cases across all functions)
+- All tests passing including integration tests with mixed transformations
+- **Key insight**: Pattern consistency across transformation functions
+- Learned string slicing, edge case handling, and switch statements
+- Pipeline architecture continues to work beautifully with composable transformations
 - Following TDD methodology with honest evaluation approach
 
 ### Next Session Instructions
-1. Continue with TASK-005: Implement basic case transformations (up), (low), (cap)
-2. Add case transformation functions to transform package
-3. Implement string case manipulation using Go's strings package
-4. Write comprehensive tests for case transformations
+1. Continue with TASK-006: Implement multi-word case transformations (up, 2), (low, 3), (cap, 1)
+2. Extend case transformation function to handle counted markers
+3. Implement backward word traversal for multi-word processing
+4. Write comprehensive tests for multi-word transformations
 5. Maintain step-by-step Go learning approach with explanations
 
 ### Session Restoration Command
