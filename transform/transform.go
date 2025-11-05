@@ -11,8 +11,8 @@ import (
 func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
 	tokens = processNumberConversion(tokens)
 	tokens = processCaseTransformations(tokens)
+	tokens = processPunctuation(tokens)
 	// Future transformations will be added here:
-	// tokens = processPunctuation(tokens)
 	// tokens = processQuotes(tokens)
 	// tokens = processArticles(tokens)
 	return tokens
@@ -145,6 +145,31 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 		
 		result = append(result, token)
 		i++
+	}
+	
+	return result
+}
+// processPunctuation handles spacing for punctuation marks .,!?:;
+func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
+	result := make([]tokenizer.Token, 0, len(tokens))
+	
+	for i, token := range tokens {
+		if token.Type == tokenizer.Punctuation {
+			// Remove whitespace before punctuation
+			for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
+				result = result[:len(result)-1]
+			}
+			
+			// Add punctuation
+			result = append(result, token)
+			
+			// Add single space after punctuation if not at end
+			if i < len(tokens)-1 && tokens[i+1].Type != tokenizer.Whitespace {
+				result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
+			}
+		} else {
+			result = append(result, token)
+		}
 	}
 	
 	return result
