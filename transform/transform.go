@@ -149,26 +149,52 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 	
 	return result
 }
-// processPunctuation handles spacing for punctuation marks .,!?:;
+// processPunctuation handles spacing for punctuation marks .,!?:; and groups
 func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
 	
-	for i, token := range tokens {
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
 		if token.Type == tokenizer.Punctuation {
 			// Remove whitespace before punctuation
 			for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 				result = result[:len(result)-1]
 			}
 			
-			// Add punctuation
-			result = append(result, token)
+			// Collect consecutive punctuation marks (skip whitespace between them)
+			punctGroup := token.Value
+			j := i + 1
+			for j < len(tokens) {
+				if tokens[j].Type == tokenizer.Punctuation {
+					punctGroup += tokens[j].Value
+					j++
+				} else if tokens[j].Type == tokenizer.Whitespace {
+					// Skip whitespace and check if next is punctuation
+					if j+1 < len(tokens) && tokens[j+1].Type == tokenizer.Punctuation {
+						j++
+					} else {
+						break
+					}
+				} else {
+					break
+				}
+			}
 			
-			// Add single space after punctuation if not at end
-			if i < len(tokens)-1 && tokens[i+1].Type != tokenizer.Whitespace {
+			// Add the punctuation group as single token
+			result = append(result, tokenizer.Token{Type: tokenizer.Punctuation, Value: punctGroup})
+			
+			// Add single space after punctuation group if there's a following word
+			if j < len(tokens) && tokens[j].Type != tokenizer.Whitespace {
 				result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
 			}
+			
+			// Skip processed tokens
+			i = j
 		} else {
 			result = append(result, token)
+			i++
 		}
 	}
 	

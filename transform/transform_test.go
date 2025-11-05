@@ -37,6 +37,11 @@ func TestProcessTokens(t *testing.T) {
 		{"colon", "note :", "note:"},
 		{"multiple punct", "hello , world !", "hello, world!"},
 		{"end period", "done .", "done."},
+		{"ellipsis", "word ... next", "word... next"},
+		{"question-exclamation", "What !?", "What!?"},
+		{"double exclamation", "word !!", "word!!"},
+		{"mixed groups", "Wait ... What !?", "Wait... What!?"},
+		{"complex groups", "thinking ... really !?", "thinking... really!?"},
 	}
 
 	for _, tt := range tests {
