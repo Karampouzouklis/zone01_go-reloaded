@@ -279,6 +279,13 @@ ok  	go-reloaded/tokenizer	0.005s
 - Integration testing successful - "I was thinking ... You were right" → "I was thinking... You were right"
 - Pipeline architecture continues to work beautifully with extended formatting logic
 - Following TDD methodology with immediate PROGRESS.md updates
+- ✅ **REFACTORING**: Changed "Marker" terminology to "Command" throughout codebase
+  - Updated TokenType enum: `Marker` → `Command`
+  - Updated Token struct field: `Marker string` → `Command string`
+  - Updated all function names: `parseMarker()` → `parseCommand()`
+  - Updated all variable names: `markerPattern` → `commandPattern`
+  - Updated all test cases and comments
+  - All tests still passing after refactoring - no functionality broken
 
 ### Next Session Instructions
 1. Continue with TASK-009: Implement quote handling for single quotes ('text')
@@ -286,6 +293,7 @@ ok  	go-reloaded/tokenizer	0.005s
 3. Handle single quotes with proper spacing (no spaces inside quotes)
 4. Write comprehensive tests for quote positioning and pairing
 5. Maintain step-by-step Go learning approach with explanations
+6. **Note**: All code now uses "Command" terminology instead of "Marker"
 
 ### Session Restoration Command
 **To continue in a new session, simply say:**

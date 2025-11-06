@@ -32,30 +32,30 @@ func TestTokenize(t *testing.T) {
 			},
 		},
 		{
-			name:  "transformation markers",
+			name:  "transformation commands",
 			input: "word (up)",
 			expected: []Token{
 				{Type: Word, Value: "word"},
 				{Type: Whitespace, Value: " "},
-				{Type: Marker, Value: "(up)", Marker: "up"},
+				{Type: Command, Value: "(up)", Command: "up"},
 			},
 		},
 		{
-			name:  "counted markers",
+			name:  "counted commands",
 			input: "words (up, 2)",
 			expected: []Token{
 				{Type: Word, Value: "words"},
 				{Type: Whitespace, Value: " "},
-				{Type: Marker, Value: "(up, 2)", Marker: "up", Count: 2},
+				{Type: Command, Value: "(up, 2)", Command: "up", Count: 2},
 			},
 		},
 		{
-			name:  "hex marker",
+			name:  "hex command",
 			input: "1E (hex)",
 			expected: []Token{
 				{Type: Word, Value: "1E"},
 				{Type: Whitespace, Value: " "},
-				{Type: Marker, Value: "(hex)", Marker: "hex"},
+				{Type: Command, Value: "(hex)", Command: "hex"},
 			},
 		},
 		{

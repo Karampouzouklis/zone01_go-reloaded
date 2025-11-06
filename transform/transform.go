@@ -26,7 +26,7 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 	for i < len(tokens) {
 		token := tokens[i]
 		
-		if token.Type == tokenizer.Marker && (token.Marker == "hex" || token.Marker == "bin") {
+		if token.Type == tokenizer.Command && (token.Command == "hex" || token.Command == "bin") {
 			// Find the previous word token (skip whitespace)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
@@ -41,7 +41,7 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 			if wordIndex >= 0 {
 				// Determine base: hex=16, bin=2
 				base := 16
-				if token.Marker == "bin" {
+				if token.Command == "bin" {
 					base = 2
 				}
 				
@@ -85,7 +85,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 	for i < len(tokens) {
 		token := tokens[i]
 		
-		if token.Type == tokenizer.Marker && (token.Marker == "up" || token.Marker == "low" || token.Marker == "cap") {
+		if token.Type == tokenizer.Command && (token.Command == "up" || token.Command == "low" || token.Command == "cap") {
 			// Find the previous word token (skip whitespace)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
@@ -116,7 +116,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 						word := result[k].Value
 						var transformed string
 						
-						switch token.Marker {
+						switch token.Command {
 						case "up":
 							transformed = strings.ToUpper(word)
 						case "low":
