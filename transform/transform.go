@@ -157,7 +157,7 @@ func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 	for i < len(tokens) {
 		token := tokens[i]
 		
-		if token.Type == tokenizer.Punctuation {
+		if token.Type == tokenizer.Punctuation && token.Value != "'" {
 			// Remove whitespace before punctuation
 			for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 				result = result[:len(result)-1]

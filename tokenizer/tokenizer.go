@@ -30,7 +30,8 @@ func Tokenize(text string) []Token {
 	
 	// Regex patterns
 	commandPattern := regexp.MustCompile(`\([a-z]+(?:,\s*\d+)?\)`)
-	punctPattern := regexp.MustCompile(`[.,:;!?']+`)
+	quotePattern := regexp.MustCompile(`'`)
+	punctPattern := regexp.MustCompile(`[.,:;!?]+`)
 	wordPattern := regexp.MustCompile(`[a-zA-Z0-9]+`)
 	spacePattern := regexp.MustCompile(`\s+`)
 	
@@ -45,7 +46,14 @@ func Tokenize(text string) []Token {
 			continue
 		}
 		
-		// Check for punctuation
+		// Check for quotes (before other punctuation)
+		if quoteMatch := quotePattern.FindStringIndex(text[i:]); quoteMatch != nil && quoteMatch[0] == 0 {
+			tokens = append(tokens, Token{Type: Punctuation, Value: "'"})
+			i += 1
+			continue
+		}
+		
+		// Check for other punctuation
 		if punctMatch := punctPattern.FindStringIndex(text[i:]); punctMatch != nil && punctMatch[0] == 0 {
 			punctText := text[i : i+punctMatch[1]]
 			tokens = append(tokens, Token{Type: Punctuation, Value: punctText})
