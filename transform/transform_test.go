@@ -21,8 +21,7 @@ func TestMulti(t *testing.T) {
 		{"overlapping transformations", "Make these THREE WORDS (low, 2) very (up, 3) important", "Make these THREE WORDS VERY important"},
 		{"adjacent marker", "Make it loud(up)!", "Make it LOUD!"},
 		{"mixed transformations", "Simply add 42 (hex) and 10 (bin) and you get 68.", "Simply add 66 and 2 and you get 68."},
-		// TODO: Enable when quote handling is implemented
-		// {"tricky 1 - quotes with transformations", "He said ' I want 1a (hex) apples (up, 2) ' today .", "He said 'I want 26 APPLES' today."},
+		{"tricky 1 - quotes with transformations", "He said ' I want 1a (hex) apples (up, 2) ' today .", "He said 'I want 26 APPLES' today."},
 		// TODO: Enable when quote handling and article correction are implemented
 		// {"tricky 4 - article with quoted transformation", "It was a 'honest (cap)' decision .", "It was an 'Honest' decision."},
 		// TODO: Enable when article correction is implemented
@@ -149,6 +148,36 @@ func TestPunctuation(t *testing.T) {
 				output += token.Value
 			}
 
+			if output != tt.expected {
+				t.Errorf("Expected '%s', got '%s'", tt.expected, output)
+			}
+		})
+	}
+}
+func TestQuotes(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"simple quotes", "I am ' awesome '", "I am 'awesome'"},
+		{"multi-word quotes", "As he said: ' I am the best '", "As he said: 'I am the best'"},
+		{"quotes with punctuation", "He said ' Hello , world ! '", "He said 'Hello, world!'"},
+		{"quotes with transformations", "He said ' word (up) '", "He said 'WORD'"},
+		{"multiple quote pairs", "' first ' and ' second '", "'first' and 'second'"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens := tokenizer.Tokenize(tt.input)
+			result := processQuotes(tokens)
+			
+			// Reconstruct text from tokens
+			output := ""
+			for _, token := range result {
+				output += token.Value
+			}
+			
 			if output != tt.expected {
 				t.Errorf("Expected '%s', got '%s'", tt.expected, output)
 			}

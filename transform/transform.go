@@ -10,10 +10,10 @@ import (
 // ProcessTokens applies all transformations in pipeline order
 func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
 	tokens = processNumberConversion(tokens)
+	tokens = processQuotes(tokens)
 	tokens = processCaseTransformations(tokens)
 	tokens = processPunctuation(tokens)
 	// Future transformations will be added here:
-	// tokens = processQuotes(tokens)
 	// tokens = processArticles(tokens)
 	return tokens
 }
@@ -196,6 +196,70 @@ func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 			result = append(result, token)
 			i++
 		}
+	}
+	
+	return result
+}
+// processQuotes handles single quote positioning around words and phrases
+func processQuotes(tokens []tokenizer.Token) []tokenizer.Token {
+	result := make([]tokenizer.Token, 0, len(tokens))
+	
+	i := 0
+	for i < len(tokens) {
+		token := tokens[i]
+		
+		if token.Type == tokenizer.Punctuation && token.Value == "'" {
+			// Find matching closing quote
+			closeIndex := -1
+			for j := i + 1; j < len(tokens); j++ {
+				if tokens[j].Type == tokenizer.Punctuation && tokens[j].Value == "'" {
+					closeIndex = j
+					break
+				}
+			}
+			
+			if closeIndex != -1 {
+				// Collect content between quotes
+				quoteContent := make([]tokenizer.Token, 0)
+				for k := i + 1; k < closeIndex; k++ {
+					quoteContent = append(quoteContent, tokens[k])
+				}
+				
+				// Process content through transformations
+				quoteContent = processCaseTransformations(quoteContent)
+				quoteContent = processPunctuation(quoteContent)
+				
+				// Remove leading/trailing whitespace from processed content
+				start := 0
+				end := len(quoteContent)
+				
+				for start < end && quoteContent[start].Type == tokenizer.Whitespace {
+					start++
+				}
+				
+				for end > start && quoteContent[end-1].Type == tokenizer.Whitespace {
+					end--
+				}
+				
+				// Add opening quote
+				result = append(result, token)
+				
+				// Add processed content
+				for k := start; k < end; k++ {
+					result = append(result, quoteContent[k])
+				}
+				
+				// Add closing quote
+				result = append(result, tokenizer.Token{Type: tokenizer.Punctuation, Value: "'"})
+				
+				// Skip to after closing quote
+				i = closeIndex + 1
+				continue
+			}
+		}
+		
+		result = append(result, token)
+		i++
 	}
 	
 	return result
