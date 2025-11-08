@@ -10,11 +10,10 @@ import (
 // ProcessTokens applies all transformations in pipeline order
 func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
 	tokens = processNumberConversion(tokens)
+	tokens = processArticles(tokens)
 	tokens = processQuotes(tokens)
 	tokens = processCaseTransformations(tokens)
 	tokens = processPunctuation(tokens)
-	// Future transformations will be added here:
-	// tokens = processArticles(tokens)
 	return tokens
 }
 
@@ -262,6 +261,46 @@ func processQuotes(tokens []tokenizer.Token) []tokenizer.Token {
 
 		result = append(result, token)
 		i++
+	}
+
+	return result
+}
+
+// processArticles converts 'a' to 'an' before vowels (a,e,i,o,u) and 'h'
+func processArticles(tokens []tokenizer.Token) []tokenizer.Token {
+	result := make([]tokenizer.Token, 0, len(tokens))
+
+	for i, token := range tokens {
+		if token.Type == tokenizer.Word && (token.Value == "a" || token.Value == "A") {
+			// Look for next word (skip whitespace)
+			nextWordIndex := -1
+			for j := i + 1; j < len(tokens); j++ {
+				if tokens[j].Type == tokenizer.Word {
+					nextWordIndex = j
+					break
+				} else if tokens[j].Type != tokenizer.Whitespace {
+					break
+				}
+			}
+
+			if nextWordIndex != -1 {
+				nextWord := tokens[nextWordIndex].Value
+				if len(nextWord) > 0 {
+					firstChar := strings.ToLower(string(nextWord[0]))
+					// Check if starts with vowel or h
+					if firstChar == "a" || firstChar == "e" || firstChar == "i" || firstChar == "o" || firstChar == "u" || firstChar == "h" {
+						// Convert a->an, A->An
+						if token.Value == "a" {
+							token.Value = "an"
+						} else {
+							token.Value = "An"
+						}
+					}
+				}
+			}
+		}
+
+		result = append(result, token)
 	}
 
 	return result

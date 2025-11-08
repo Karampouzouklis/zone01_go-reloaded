@@ -29,7 +29,7 @@
 - `tasks/TASK-*.md` - Step-by-step implementation roadmap
 - `CONTRIBUTING.md` - Development workflow and guidelines
 
-## Current Status: TASK-010 (Article Correction) - Ready to Start
+## Current Status: TASK-011 (Pipeline Integration) - Ready to Start
 
 ### Completed Tasks
 - ✅ **TASK-001: Project Setup and Basic Structure**
@@ -113,23 +113,33 @@
   - Successfully integrated with existing pipeline without order dependencies
   - **Key Learning**: Token type design, regex consistency, separation of concerns
 
-### Current Task: TASK-010 - Article Correction
+- ✅ **TASK-010: Article Correction**
+  - Implemented `processArticles()` function for `a` → `an` conversion before vowels and `h`
+  - Handles case-insensitive vowel detection (a, e, i, o, u, h)
+  - Maintains original case: `a` → `an`, `A` → `An`
+  - Uses lookahead processing to check next word's first character
+  - All article correction working correctly: `A amazing rock!` → `An amazing rock!`
+  - Successfully integrated with existing pipeline
+  - **Key Learning**: Lookahead processing, character classification, case-insensitive comparison
+
+### Current Task: TASK-011 - Pipeline Integration
 **Status**: Ready to start implementation
 **Next Steps**: 
-1. Implement article correction: `a` → `an` before vowels (a, e, i, o, u) and `h`
-2. Handle case sensitivity and word boundaries
-3. Add comprehensive article correction tests
-4. Integrate with existing transformation pipeline
+1. Verify all transformations work together correctly
+2. Test complex scenarios with multiple transformation types
+3. Add comprehensive integration tests
+4. Ensure proper processing order and no conflicts
 
 ### Files Created/Modified
 - `main.go` - Entry point with file I/O, error handling, tokenizer and transform integration
-- `main_test.go` - Comprehensive test suite including hex conversion tests
-- `tokenizer/tokenizer.go` - Token struct, TokenType enum, and tokenization logic
-- `tokenizer/tokenizer_test.go` - Comprehensive tokenizer tests (6 test cases)
-- `transform/transform.go` - Transformation pipeline with hex conversion
-- `sample.txt` - Test input file
-- `result.txt` - Test output file (generated)
+- `main_test.go` - Comprehensive test suite for main functionality
+- `tokenizer/tokenizer.go` - Token struct, TokenType enum (Word, Punctuation, Command, Quote, Whitespace), and tokenization logic
+- `tokenizer/tokenizer_test.go` - Comprehensive tokenizer tests (7 test cases including quotes)
+- `transform/transform.go` - Complete transformation pipeline with all functions
+- `transform/transform_test.go` - Article correction tests (6 test cases)
+- `sample.txt`, `result.txt` - Basic test files
 - `test_hex.txt`, `result_hex.txt` - Hex conversion test files
+- `test_articles.txt`, `result_articles.txt` - Article correction test files
 - `go-reloaded` - Compiled binary
 
 ### Go Concepts Learned by Task
@@ -213,6 +223,15 @@
 60. **Content Trimming**: Removing leading/trailing whitespace with start/end index management
 61. **Token Matching**: Finding matching pairs of tokens (opening/closing quotes) with forward scanning
 
+#### TASK-010: Lookahead Processing & Character Classification
+62. **Lookahead Processing**: Scanning forward through tokens to check next word with `for j := i + 1; j < len(tokens)`
+63. **Character Classification**: Using `strings.ToLower(string(nextWord[0]))` for vowel detection
+64. **Case-insensitive Comparison**: Converting to lowercase for consistent checking regardless of input case
+65. **Conditional Text Replacement**: Modifying token values based on conditions (`a` → `an`, `A` → `An`)
+66. **String Indexing**: Accessing first character with `nextWord[0]` and handling empty strings
+67. **Multiple Condition Checking**: Using OR operators for vowel detection (`firstChar == "a" || firstChar == "e"`)
+68. **Case Preservation**: Maintaining original case pattern when making replacements
+
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
 - **Separation of Concerns**: Each transformation is a separate function with single responsibility
@@ -228,13 +247,7 @@
 - **Justification**: Learning project prioritizes understanding over optimization
 
 ### Upcoming Tasks (Roadmap)
-- TASK-009: Quote Handling (current)
-- TASK-010: Article Correction
-- TASK-007: Punctuation Formatting
-- TASK-008: Punctuation Groups
-- TASK-009: Quote Handling
-- TASK-010: Article Correction
-- TASK-011: Pipeline Integration
+- TASK-011: Pipeline Integration (current)
 - TASK-012: Complex Integration Testing
 - TASK-013: Performance Final Validation
 
@@ -247,26 +260,38 @@
 === RUN   TestRun/input_file_not_found
 --- PASS: TestRun (0.00s)
 PASS
-ok  	go-reloaded	0.003s
+ok  	go-reloaded	0.012s
 
 === RUN   TestTokenize
 === RUN   TestTokenize/simple_words
 === RUN   TestTokenize/with_punctuation
-=== RUN   TestTokenize/transformation_markers
-=== RUN   TestTokenize/counted_markers
-=== RUN   TestTokenize/hex_marker
+=== RUN   TestTokenize/transformation_commands
+=== RUN   TestTokenize/counted_commands
+=== RUN   TestTokenize/hex_command
 === RUN   TestTokenize/multiple_punctuation
+=== RUN   TestTokenize/quotes
 --- PASS: TestTokenize (0.00s)
 PASS
-ok  	go-reloaded/tokenizer	0.005s
+ok  	go-reloaded/tokenizer	0.009s
+
+=== RUN   TestProcessArticles
+=== RUN   TestProcessArticles/a_before_vowel_a
+=== RUN   TestProcessArticles/a_before_vowel_e
+=== RUN   TestProcessArticles/a_before_h
+=== RUN   TestProcessArticles/uppercase_A
+=== RUN   TestProcessArticles/no_change_for_consonant
+=== RUN   TestProcessArticles/all_vowels
+--- PASS: TestProcessArticles (0.00s)
+PASS
+ok  	go-reloaded/transform	0.003s
 ```
 
 **Coverage Analysis (using `go test -cover ./...`):**
-- **Overall**: 93.6% statement coverage
-- **Main package**: 80.0% (run function: 94.1%, main function: 0% - expected)
-- **Tokenizer**: 97.4% (excellent coverage)
-- **Transform**: 95.5% (excellent coverage)
-- **Quality**: Exceeds industry standard (>90%) for learning projects
+- **Overall**: Excellent coverage across all packages
+- **Main package**: Core functionality fully tested
+- **Tokenizer**: All token types including Quote type tested
+- **Transform**: All transformation functions including article correction tested
+- **Quality**: Comprehensive test coverage for learning project
 
 ### Current Working Directory
 `go-reloaded/` (project root)
@@ -289,27 +314,24 @@ ok  	go-reloaded/tokenizer	0.005s
 **Justification**: Learning Go fundamentals, design patterns, and best practices is more valuable than micro-optimizations at this stage.
 
 ### Last Session Notes
-- ✅ Successfully completed TASK-009: Quote Handling
-- **CRITICAL ARCHITECTURAL FIX**: Identified and resolved quote/punctuation interference
-  - Problem: Quotes were tokenized as `Punctuation` type, causing `processPunctuation()` to interfere
-  - Solution: Created separate `Quote` token type with proper separation of concerns
-  - Fixed tokenizer inconsistency: now uses `quoteText` from regex match like other token types
-- Implemented `processQuotes()` function for quote positioning and pairing
-- Quote content is processed through transformation pipeline (case, punctuation)
-- Removes leading/trailing whitespace inside quotes
-- All tests passing with proper quote handling: `I am ' awesome '` → `I am 'awesome'`
-- **Key insight**: Token type design is crucial for avoiding processing conflicts
-- Pipeline now order-independent for quote processing
-- ✅ **PREVIOUS REFACTORING**: Changed "Marker" terminology to "Command" throughout codebase
-  - All functionality maintained, improved code clarity
+- ✅ Successfully completed TASK-010: Article Correction
+- Implemented `processArticles()` function with lookahead processing
+- Handles all vowels (a, e, i, o, u) and letter `h` with case-insensitive detection
+- Maintains original case pattern: `a` → `an`, `A` → `An`
+- Uses forward scanning to find next word, skipping whitespace
+- All tests passing with proper article correction: `A amazing rock!` → `An amazing rock!`
+- **Key insight**: Lookahead processing enables context-aware transformations
+- Successfully integrated with existing pipeline without conflicts
+- ✅ **PREVIOUS ARCHITECTURAL FIXES**: Quote/punctuation separation and Command terminology
+  - All functionality maintained, improved code clarity and separation of concerns
 
 ### Next Session Instructions
-1. Continue with TASK-010: Implement article correction (`a` → `an` before vowels and `h`)
-2. Handle case sensitivity and word boundaries properly
-3. Add comprehensive article correction tests
-4. Write comprehensive tests for article correction
+1. Continue with TASK-011: Pipeline Integration testing
+2. Test complex scenarios with multiple transformation types combined
+3. Add comprehensive integration tests for edge cases
+4. Verify all transformations work together without conflicts
 5. Maintain step-by-step Go learning approach with explanations
-6. **Note**: All code now uses "Command" terminology and separate "Quote" token type
+6. **Note**: All core transformations now complete - focus on integration quality
 
 ### Session Restoration Command
 **To continue in a new session, simply say:**
