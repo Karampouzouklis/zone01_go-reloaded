@@ -85,13 +85,13 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 		token := tokens[i]
 
 		if token.Type == tokenizer.Command && (token.Command == "up" || token.Command == "low" || token.Command == "cap") {
-			// Find the previous word token (skip whitespace)
+			// Find the previous word token (skip whitespace and quotes)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
 				if tokens[j].Type == tokenizer.Word {
 					wordIndex = j
 					break
-				} else if tokens[j].Type != tokenizer.Whitespace {
+				} else if tokens[j].Type != tokenizer.Whitespace && tokens[j].Type != tokenizer.Quote {
 					break
 				}
 			}
@@ -108,7 +108,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 					result = result[:len(result)-1]
 				}
 
-				// Transform the specified number of words backward
+				// Transform the specified number of words backward (skip quotes and whitespace)
 				wordsTransformed := 0
 				for k := len(result) - 1; k >= 0 && wordsTransformed < count; k-- {
 					if result[k].Type == tokenizer.Word {
@@ -134,6 +134,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 						}
 						wordsTransformed++
 					}
+					// Skip quotes and whitespace when counting backward
 				}
 
 				// Skip the marker
@@ -226,11 +227,7 @@ func processQuotes(tokens []tokenizer.Token) []tokenizer.Token {
 					quoteContent = append(quoteContent, tokens[k])
 				}
 
-				// Process content through transformations
-				quoteContent = processCaseTransformations(quoteContent)
-				quoteContent = processPunctuation(quoteContent)
-
-				// Remove leading/trailing whitespace from processed content
+				// Remove leading/trailing whitespace from content
 				start := 0
 				end := len(quoteContent)
 
@@ -245,7 +242,7 @@ func processQuotes(tokens []tokenizer.Token) []tokenizer.Token {
 				// Add opening quote
 				result = append(result, token)
 
-				// Add processed content
+				// Add content without leading/trailing whitespace
 				for k := start; k < end; k++ {
 					result = append(result, quoteContent[k])
 				}

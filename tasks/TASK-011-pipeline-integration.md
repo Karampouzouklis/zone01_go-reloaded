@@ -22,10 +22,10 @@ Chain all transformation stages together in correct order and verify complete fu
 ### Processing Order
 1. **Tokenization**: Text → Tokens
 2. **Number Conversion**: Hex/Binary → Decimal
-3. **Case Transformations**: (up), (low), (cap) with counts
-4. **Punctuation Formatting**: Spacing and grouping
-5. **Quote Handling**: Quote positioning
-6. **Article Correction**: a → an
+3. **Article Correction**: a → an
+4. **Quote Handling**: Quote positioning
+5. **Case Transformations**: (up), (low), (cap) with counts
+6. **Punctuation Formatting**: Spacing and grouping
 7. **Formatting**: Tokens → Text
 
 ### Integration Examples

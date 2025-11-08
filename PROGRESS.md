@@ -29,7 +29,7 @@
 - `tasks/TASK-*.md` - Step-by-step implementation roadmap
 - `CONTRIBUTING.md` - Development workflow and guidelines
 
-## Current Status: TASK-011 (Pipeline Integration) - Ready to Start
+## Current Status: TASK-012 (Complex Integration Testing) - Ready to Start
 
 ### Completed Tasks
 - ✅ **TASK-001: Project Setup and Basic Structure**
@@ -122,13 +122,22 @@
   - Successfully integrated with existing pipeline
   - **Key Learning**: Lookahead processing, character classification, case-insensitive comparison
 
-### Current Task: TASK-011 - Pipeline Integration
+- ✅ **TASK-011: Pipeline Integration**
+  - **MAJOR ARCHITECTURAL REFACTORING**: Simplified `processQuotes()` to only handle quote positioning
+  - Removed nested transformation calls that violated separation of concerns
+  - Fixed commands after quotes by making case transformations skip over quote tokens
+  - Established correct processing order: Numbers → Articles → Quotes → Case → Punctuation
+  - All core transformations now work together correctly
+  - Pipeline integration successful: `'a upper case' (up, 3)` → `'AN UPPER CASE'`
+  - **Key Learning**: Pipeline architecture, separation of concerns, token type handling
+
+### Current Task: TASK-012 - Complex Integration Testing
 **Status**: Ready to start implementation
 **Next Steps**: 
-1. Verify all transformations work together correctly
-2. Test complex scenarios with multiple transformation types
-3. Add comprehensive integration tests
-4. Ensure proper processing order and no conflicts
+1. Handle edge cases like commands adjacent to quotes: `'text'(up, 2)`
+2. Test overlapping transformations and complex interactions
+3. Add comprehensive integration tests for tricky scenarios
+4. Debug and fix remaining edge cases
 
 ### Files Created/Modified
 - `main.go` - Entry point with file I/O, error handling, tokenizer and transform integration
@@ -232,6 +241,16 @@
 67. **Multiple Condition Checking**: Using OR operators for vowel detection (`firstChar == "a" || firstChar == "e"`)
 68. **Case Preservation**: Maintaining original case pattern when making replacements
 
+#### TASK-011: Pipeline Architecture & Cross-Token Processing
+69. **Pipeline Architecture**: Designing multi-stage processing with clear separation of concerns
+70. **Function Composition**: Chaining transformation functions in correct order for desired results
+71. **Cross-Token Processing**: Making transformations work across different token types (words, quotes, whitespace)
+72. **Token Type Filtering**: Using `tokens[j].Type != tokenizer.Whitespace && tokens[j].Type != tokenizer.Quote` for selective skipping
+73. **Architectural Refactoring**: Removing nested function calls that violate separation of concerns
+74. **Processing Order Design**: Understanding how transformation sequence affects final results
+75. **Integration Debugging**: Identifying and fixing conflicts between pipeline stages
+76. **Token Boundary Handling**: Making transformations work regardless of intervening non-word tokens
+
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
 - **Separation of Concerns**: Each transformation is a separate function with single responsibility
@@ -314,16 +333,16 @@ ok  	go-reloaded/transform	0.003s
 **Justification**: Learning Go fundamentals, design patterns, and best practices is more valuable than micro-optimizations at this stage.
 
 ### Last Session Notes
-- ✅ Successfully completed TASK-010: Article Correction
-- Implemented `processArticles()` function with lookahead processing
-- Handles all vowels (a, e, i, o, u) and letter `h` with case-insensitive detection
-- Maintains original case pattern: `a` → `an`, `A` → `An`
-- Uses forward scanning to find next word, skipping whitespace
-- All tests passing with proper article correction: `A amazing rock!` → `An amazing rock!`
-- **Key insight**: Lookahead processing enables context-aware transformations
-- Successfully integrated with existing pipeline without conflicts
-- ✅ **PREVIOUS ARCHITECTURAL FIXES**: Quote/punctuation separation and Command terminology
-  - All functionality maintained, improved code clarity and separation of concerns
+- ✅ Successfully completed TASK-011: Pipeline Integration
+- **CRITICAL ARCHITECTURAL REFACTORING**: Removed nested transformations from `processQuotes()`
+- Fixed commands after quotes by making case transformations skip quote tokens in backward search
+- Established clean pipeline: Numbers → Articles → Quotes → Case → Punctuation
+- Each transformation now has single responsibility and works independently
+- Major fix: `'a upper case' (up, 3)` now correctly produces `'AN UPPER CASE'`
+- **Key insight**: Token type awareness crucial for cross-boundary transformations
+- Pipeline integration successful with proper separation of concerns
+- **Remaining edge case**: Commands directly adjacent to quotes without whitespace
+- Ready for TASK-012 to handle remaining complex scenarios
 
 ### Next Session Instructions
 1. Continue with TASK-011: Pipeline Integration testing
