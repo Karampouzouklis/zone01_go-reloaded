@@ -1,4 +1,4 @@
-THere (cap) seems to be 1f3 (hex) ..' weird errors ' here ! !!
+THere (cap) seems to be 1f3(hex) ..' weird errors ' here ! !!
 How high (up), how lOw (low, 3) , is ' all (up)up to hIm (cap) '
 I am ' awesome '
 This is (up) ' a upper case ' (up, 3) scenario
@@ -9,3 +9,4 @@ When ' a orange (cap, 2)'(up, 2) is green (up) ,  throw it away !  !
 A  ' command pattern ' can (up, 3) be processed . .. .
 harold wilson (cap, 2) : ' I am a optimist ,but a optimist who carries a raincoat . '
 This (is not) what you 2 would (up,3) expect ! Because (we , 2) are NOT (low) 'here! ' .
+101(bin)wizards in the land (cap, 5)of lizards ! 5(bin)lessons learned .

@@ -142,6 +142,8 @@
   - **DEFENSIVE PROGRAMMING**: Added comprehensive edge case testing with 13 test scenarios
   - Robust error handling: empty strings, unmatched quotes, invalid markers, malformed input
   - Graceful degradation: invalid markers become regular text, no crashes on edge cases
+  - **SPACING REFINEMENTS**: Fixed command removal spacing - adds space only when no whitespace exists after command
+  - **INVALID COMMAND HANDLING**: Valid commands with invalid input (e.g., `5 (bin)`) consume command but preserve word
   - **Key Learning**: Target-specific processing, integration testing vs unit testing, test design principles, defensive programming
 
 ### Current Task: TASK-013 - Performance & Final Validation
@@ -280,6 +282,9 @@
 87. **Graceful Degradation**: Converting invalid input to safe fallback behavior instead of failing
 88. **Boundary Testing**: Testing extreme cases like empty strings, very large counts, invalid formats
 89. **Robustness Validation**: Ensuring code doesn't crash on any reasonable input variation
+90. **Command Spacing Logic**: Adding spaces only when needed to prevent double spaces while ensuring proper word separation
+91. **Invalid Input Classification**: Distinguishing between malformed commands (syntax errors) vs valid commands with invalid input
+92. **Conditional Space Insertion**: Using lookahead logic to determine when space insertion is necessary after command removal
 
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
@@ -368,8 +373,12 @@ ok  	go-reloaded/transform	0.003s
 - Restored comprehensive test suite with 6 test functions covering all transformation types
 - All TASK-012 tricky edge cases now working: adjacent commands, overlapping transformations, complex scenarios
 - **DEFENSIVE PROGRAMMING ADDED**: Created comprehensive edge case test suite with 13 scenarios
+- **SPACING REFINEMENTS**: Fixed command removal to add space only when no whitespace exists after command
+- **INVALID COMMAND HANDLING**: Valid commands with invalid input consume command but preserve original word
 - Edge case insights: Commands work across punctuation (`word! (up)` → `WORD!`), invalid markers become text
 - Robust error handling: empty strings, unmatched quotes, invalid counts, malformed input all handled gracefully
+- Command spacing: `word(up)next` → `WORD next`, `word (up) next` → `WORD next` (no double spaces)
+- Invalid number handling: `5 (bin)` → `5`, `xyz (hex)` → `xyz` (command consumed, word preserved)
 - **Key insight**: Target-specific processing eliminates inconsistencies and makes code more robust
 - All README functional cases, tricky scenarios, and edge cases passing
 - Ready for TASK-013: Performance optimization and final validation

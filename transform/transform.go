@@ -59,11 +59,25 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 							break
 						}
 					}
-
-					// Skip the marker
-					i++
-					continue
+				} else {
+					// Valid command but invalid number - remove whitespace before marker and consume command
+					for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
+						result = result[:len(result)-1]
+					}
 				}
+
+				// Add space after marker if next token is a word and there's no whitespace between
+				if i+1 < len(tokens) {
+					if tokens[i+1].Type == tokenizer.Word {
+						// No whitespace after command, add space
+						result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
+					}
+					// If next token is whitespace, it will be added naturally in the next iteration
+				}
+
+				// Skip the marker
+				i++
+				continue
 			}
 		}
 
@@ -130,6 +144,15 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 						}
 						wordsTransformed++
 					}
+				}
+
+				// Add space after marker if next token is a word and there's no whitespace between
+				if i+1 < len(tokens) {
+					if tokens[i+1].Type == tokenizer.Word {
+						// No whitespace after command, add space
+						result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
+					}
+					// If next token is whitespace, it will be added naturally in the next iteration
 				}
 
 				// Skip the marker
