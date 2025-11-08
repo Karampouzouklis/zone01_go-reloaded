@@ -12,18 +12,19 @@ func TestMulti(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"functional case 1", "If I make you BREAKFAST IN BED (low, 3) just say thank you instead of: how (cap) did you get in my house (up, 2) ?", "If I make you breakfast in bed just say thank you instead of: How did you get in MY HOUSE?"},
-		{"functional case 2", "I have to pack 101 (bin) outfits. Packed 1a (hex) just to be sure", "I have to pack 5 outfits. Packed 26 just to be sure"},
-		{"functional case 3", "Don not be sad ,because sad backwards is das . And das not good", "Don not be sad, because sad backwards is das. And das not good"},
+		{"Functional Case 1", "If I make you BREAKFAST IN BED (low, 3) just say thank you instead of: how (cap) did you get in my house (up, 2) ?", "If I make you breakfast in bed just say thank you instead of: How did you get in MY HOUSE?"},
+		{"Functional Case 2", "I have to pack 101 (bin) outfits. Packed 1a (hex) just to be sure", "I have to pack 5 outfits. Packed 26 just to be sure"},
+		{"Functional Case 3", "Don not be sad ,because sad backwards is das . And das not good", "Don not be sad, because sad backwards is das. And das not good"},
 		// TODO: Enable when quote handling and article correction are implemented
 		// {"functional case 4", "harold wilson (cap, 2) : ' I am a optimist ,but a optimist who carries a raincoat . '", "Harold Wilson: 'I am an optimist, but an optimist who carries a raincoat.'"},
-		{"punctuation groups", "Wait ... What !? No way !! Are you serious ... ?", "Wait... What!? No way!! Are you serious...?"},
-		{"overlapping transformations", "Make these THREE WORDS (low, 2) very (up, 3) important", "Make these THREE WORDS VERY important"},
+		{"Tricky 2 - punctuation groups", "Wait ... What !? No way !! Are you serious ... ?", "Wait... What!? No way!! Are you serious...?"},
+		{"Tricky 3 - overlapping transformations", "Make these THREE WORDS (low, 2) very (up, 3) important", "Make these THREE WORDS VERY important"},
 		{"adjacent marker", "Make it loud(up)!", "Make it LOUD!"},
 		{"mixed transformations", "Simply add 42 (hex) and 10 (bin) and you get 68.", "Simply add 66 and 2 and you get 68."},
-		{"tricky 1 - quotes with transformations", "He said ' I want 1a (hex) apples (up, 2) ' today .", "He said 'I want 26 APPLES' today."},
+		{"Simple Quotes", "I am ' awesome '", "I am 'awesome'"},
+		{"Tricky 1 - quotes with transformations", "He said ' I want 1a (hex) apples (up, 2) ' today .", "He said 'I want 26 APPLES' today."},
 		// TODO: Enable when quote handling and article correction are implemented
-		// {"tricky 4 - article with quoted transformation", "It was a 'honest (cap)' decision .", "It was an 'Honest' decision."},
+		// {"Tricky 4 - article with quoted transformation", "It was a 'honest (cap)' decision .", "It was an 'Honest' decision."},
 		// TODO: Enable when article correction is implemented
 		// {"comprehensive text", "When developing a text processing application ,you must understand that ff (hex) different algorithms exist for parsing . A experienced (cap) programmer knows that 1010 (bin) main approaches (up, 2) can be used: streaming parsers and batch processors .", "When developing a text processing application, you must understand that 255 different algorithms exist for parsing. An Experienced programmer knows that 10 MAIN APPROACHES can be used: streaming parsers and batch processors."},
 	}
@@ -171,13 +172,13 @@ func TestQuotes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens := tokenizer.Tokenize(tt.input)
 			result := processQuotes(tokens)
-			
+
 			// Reconstruct text from tokens
 			output := ""
 			for _, token := range result {
 				output += token.Value
 			}
-			
+
 			if output != tt.expected {
 				t.Errorf("Expected '%s', got '%s'", tt.expected, output)
 			}

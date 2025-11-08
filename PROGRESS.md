@@ -29,7 +29,7 @@
 - `tasks/TASK-*.md` - Step-by-step implementation roadmap
 - `CONTRIBUTING.md` - Development workflow and guidelines
 
-## Current Status: TASK-009 (Quote Handling) - Ready to Start
+## Current Status: TASK-010 (Article Correction) - Ready to Start
 
 ### Completed Tasks
 - ✅ **TASK-001: Project Setup and Basic Structure**
@@ -103,12 +103,22 @@
   - Maintains backward compatibility with basic punctuation formatting
   - **Key Learning**: Lookahead logic, state tracking, pattern recognition
 
-### Current Task: TASK-009 - Quote Handling
+- ✅ **TASK-009: Quote Handling**
+  - **ARCHITECTURAL FIX**: Created separate `Quote` token type to distinguish from punctuation
+  - Implemented `processQuotes()` function for single quote positioning ('text')
+  - Handles quote pairing and removes internal whitespace
+  - Processes content inside quotes through transformation pipeline
+  - Fixed tokenizer inconsistency - now uses extracted text from regex like other types
+  - All quote handling working correctly: `I am ' awesome '` → `I am 'awesome'`
+  - Successfully integrated with existing pipeline without order dependencies
+  - **Key Learning**: Token type design, regex consistency, separation of concerns
+
+### Current Task: TASK-010 - Article Correction
 **Status**: Ready to start implementation
 **Next Steps**: 
-1. Implement quote pairing and positioning ('text')
-2. Handle single quotes around words and phrases
-3. Add comprehensive quote handling tests
+1. Implement article correction: `a` → `an` before vowels (a, e, i, o, u) and `h`
+2. Handle case sensitivity and word boundaries
+3. Add comprehensive article correction tests
 4. Integrate with existing transformation pipeline
 
 ### Files Created/Modified
@@ -193,6 +203,16 @@
 52. **Complex Conditionals**: Nested if-else logic for different token type combinations
 53. **Index Management**: Manual loop control with `i = j` to skip processed tokens
 
+#### TASK-009: Token Type Design & Architecture Debugging
+54. **Token Type Design**: Creating separate token types for different behaviors (`Quote` vs `Punctuation`)
+55. **Architecture Debugging**: Identifying and resolving processing conflicts between pipeline stages
+56. **Separation of Concerns**: Understanding why different token types need different processing logic
+57. **Regex Consistency**: Ensuring all tokenization follows same pattern (extract text, use extracted value, increment by match length)
+58. **Pipeline Order Independence**: Designing transformations that work regardless of processing order
+59. **Nested Processing**: Processing content inside quotes through the same transformation pipeline
+60. **Content Trimming**: Removing leading/trailing whitespace with start/end index management
+61. **Token Matching**: Finding matching pairs of tokens (opening/closing quotes) with forward scanning
+
 ### Architecture Decisions Made
 - **Pipeline Architecture**: Multi-stage transformation pipeline for maximum clarity
 - **Separation of Concerns**: Each transformation is a separate function with single responsibility
@@ -269,31 +289,27 @@ ok  	go-reloaded/tokenizer	0.005s
 **Justification**: Learning Go fundamentals, design patterns, and best practices is more valuable than micro-optimizations at this stage.
 
 ### Last Session Notes
-- ✅ Successfully completed TASK-008: Punctuation Groups
-- Extended `processPunctuation()` to handle consecutive punctuation marks (..., !?, !!)
-- Implemented lookahead logic to collect punctuation groups and remove internal spaces
-- Added 5 comprehensive test cases covering ellipsis, mixed groups, and complex scenarios
-- All tests passing (36 total test cases including new punctuation group tests)
-- **Key insight**: Lookahead logic and pattern recognition are essential for complex formatting
-- Learned consecutive token processing, string concatenation, and manual index control
-- Integration testing successful - "I was thinking ... You were right" → "I was thinking... You were right"
-- Pipeline architecture continues to work beautifully with extended formatting logic
-- Following TDD methodology with immediate PROGRESS.md updates
-- ✅ **REFACTORING**: Changed "Marker" terminology to "Command" throughout codebase
-  - Updated TokenType enum: `Marker` → `Command`
-  - Updated Token struct field: `Marker string` → `Command string`
-  - Updated all function names: `parseMarker()` → `parseCommand()`
-  - Updated all variable names: `markerPattern` → `commandPattern`
-  - Updated all test cases and comments
-  - All tests still passing after refactoring - no functionality broken
+- ✅ Successfully completed TASK-009: Quote Handling
+- **CRITICAL ARCHITECTURAL FIX**: Identified and resolved quote/punctuation interference
+  - Problem: Quotes were tokenized as `Punctuation` type, causing `processPunctuation()` to interfere
+  - Solution: Created separate `Quote` token type with proper separation of concerns
+  - Fixed tokenizer inconsistency: now uses `quoteText` from regex match like other token types
+- Implemented `processQuotes()` function for quote positioning and pairing
+- Quote content is processed through transformation pipeline (case, punctuation)
+- Removes leading/trailing whitespace inside quotes
+- All tests passing with proper quote handling: `I am ' awesome '` → `I am 'awesome'`
+- **Key insight**: Token type design is crucial for avoiding processing conflicts
+- Pipeline now order-independent for quote processing
+- ✅ **PREVIOUS REFACTORING**: Changed "Marker" terminology to "Command" throughout codebase
+  - All functionality maintained, improved code clarity
 
 ### Next Session Instructions
-1. Continue with TASK-009: Implement quote handling for single quotes ('text')
-2. Add quote pairing logic to position quotes around words and phrases
-3. Handle single quotes with proper spacing (no spaces inside quotes)
-4. Write comprehensive tests for quote positioning and pairing
+1. Continue with TASK-010: Implement article correction (`a` → `an` before vowels and `h`)
+2. Handle case sensitivity and word boundaries properly
+3. Add comprehensive article correction tests
+4. Write comprehensive tests for article correction
 5. Maintain step-by-step Go learning approach with explanations
-6. **Note**: All code now uses "Command" terminology instead of "Marker"
+6. **Note**: All code now uses "Command" terminology and separate "Quote" token type
 
 ### Session Restoration Command
 **To continue in a new session, simply say:**

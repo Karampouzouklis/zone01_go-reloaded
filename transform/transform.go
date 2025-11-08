@@ -21,11 +21,11 @@ func ProcessTokens(tokens []tokenizer.Token) []tokenizer.Token {
 // processNumberConversion converts hex and binary numbers to decimal
 func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
-	
+
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
-		
+
 		if token.Type == tokenizer.Command && (token.Command == "hex" || token.Command == "bin") {
 			// Find the previous word token (skip whitespace)
 			wordIndex := -1
@@ -37,21 +37,21 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 					break
 				}
 			}
-			
+
 			if wordIndex >= 0 {
 				// Determine base: hex=16, bin=2
 				base := 16
 				if token.Command == "bin" {
 					base = 2
 				}
-				
+
 				// Convert to decimal
 				if decimal, err := strconv.ParseInt(tokens[wordIndex].Value, base, 64); err == nil {
 					// Remove whitespace before marker from result
 					for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 						result = result[:len(result)-1]
 					}
-					
+
 					// Find and replace the word in result
 					for k := len(result) - 1; k >= 0; k-- {
 						if result[k].Type == tokenizer.Word && result[k].Value == tokens[wordIndex].Value {
@@ -62,29 +62,29 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 							break
 						}
 					}
-					
+
 					// Skip the marker
 					i++
 					continue
 				}
 			}
 		}
-		
+
 		result = append(result, token)
 		i++
 	}
-	
+
 	return result
 }
 
 // processCaseTransformations handles (up), (low), and (cap) markers
 func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
-	
+
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
-		
+
 		if token.Type == tokenizer.Command && (token.Command == "up" || token.Command == "low" || token.Command == "cap") {
 			// Find the previous word token (skip whitespace)
 			wordIndex := -1
@@ -96,26 +96,26 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 					break
 				}
 			}
-			
+
 			if wordIndex >= 0 {
 				// Determine how many words to transform
 				count := token.Count
 				if count == 0 {
 					count = 1
 				}
-				
+
 				// Remove whitespace before marker from result
 				for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 					result = result[:len(result)-1]
 				}
-				
+
 				// Transform the specified number of words backward
 				wordsTransformed := 0
 				for k := len(result) - 1; k >= 0 && wordsTransformed < count; k-- {
 					if result[k].Type == tokenizer.Word {
 						word := result[k].Value
 						var transformed string
-						
+
 						switch token.Command {
 						case "up":
 							transformed = strings.ToUpper(word)
@@ -128,7 +128,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 								transformed = word
 							}
 						}
-						
+
 						result[k] = tokenizer.Token{
 							Type:  tokenizer.Word,
 							Value: transformed,
@@ -136,33 +136,34 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 						wordsTransformed++
 					}
 				}
-				
+
 				// Skip the marker
 				i++
 				continue
 			}
 		}
-		
+
 		result = append(result, token)
 		i++
 	}
-	
+
 	return result
 }
+
 // processPunctuation handles spacing for punctuation marks .,!?:; and groups
 func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
-	
+
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
-		
-		if token.Type == tokenizer.Punctuation && token.Value != "'" {
+
+		if token.Type == tokenizer.Punctuation {
 			// Remove whitespace before punctuation
 			for len(result) > 0 && result[len(result)-1].Type == tokenizer.Whitespace {
 				result = result[:len(result)-1]
 			}
-			
+
 			// Collect consecutive punctuation marks (skip whitespace between them)
 			punctGroup := token.Value
 			j := i + 1
@@ -181,15 +182,15 @@ func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 					break
 				}
 			}
-			
+
 			// Add the punctuation group as single token
 			result = append(result, tokenizer.Token{Type: tokenizer.Punctuation, Value: punctGroup})
-			
+
 			// Add single space after punctuation group if there's a following word
 			if j < len(tokens) && tokens[j].Type != tokenizer.Whitespace {
 				result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
 			}
-			
+
 			// Skip processed tokens
 			i = j
 		} else {
@@ -197,70 +198,71 @@ func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 			i++
 		}
 	}
-	
+
 	return result
 }
+
 // processQuotes handles single quote positioning around words and phrases
 func processQuotes(tokens []tokenizer.Token) []tokenizer.Token {
 	result := make([]tokenizer.Token, 0, len(tokens))
-	
+
 	i := 0
 	for i < len(tokens) {
 		token := tokens[i]
-		
-		if token.Type == tokenizer.Punctuation && token.Value == "'" {
+
+		if token.Type == tokenizer.Quote {
 			// Find matching closing quote
 			closeIndex := -1
 			for j := i + 1; j < len(tokens); j++ {
-				if tokens[j].Type == tokenizer.Punctuation && tokens[j].Value == "'" {
+				if tokens[j].Type == tokenizer.Quote {
 					closeIndex = j
 					break
 				}
 			}
-			
+
 			if closeIndex != -1 {
 				// Collect content between quotes
 				quoteContent := make([]tokenizer.Token, 0)
 				for k := i + 1; k < closeIndex; k++ {
 					quoteContent = append(quoteContent, tokens[k])
 				}
-				
+
 				// Process content through transformations
 				quoteContent = processCaseTransformations(quoteContent)
 				quoteContent = processPunctuation(quoteContent)
-				
+
 				// Remove leading/trailing whitespace from processed content
 				start := 0
 				end := len(quoteContent)
-				
+
 				for start < end && quoteContent[start].Type == tokenizer.Whitespace {
 					start++
 				}
-				
+
 				for end > start && quoteContent[end-1].Type == tokenizer.Whitespace {
 					end--
 				}
-				
+
 				// Add opening quote
 				result = append(result, token)
-				
+
 				// Add processed content
 				for k := start; k < end; k++ {
 					result = append(result, quoteContent[k])
 				}
-				
+
 				// Add closing quote
-				result = append(result, tokenizer.Token{Type: tokenizer.Punctuation, Value: "'"})
-				
+				result = append(result, tokenizer.Token{Type: tokenizer.Quote, Value: "'"})
+
 				// Skip to after closing quote
 				i = closeIndex + 1
 				continue
 			}
 		}
-		
+
 		result = append(result, token)
 		i++
 	}
-	
+
 	return result
 }

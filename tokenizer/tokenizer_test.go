@@ -69,6 +69,21 @@ func TestTokenize(t *testing.T) {
 				{Type: Punctuation, Value: "!?"},
 			},
 		},
+		{
+			name:  "quotes",
+			input: "I am ' awesome '",
+			expected: []Token{
+				{Type: Word, Value: "I"},
+				{Type: Whitespace, Value: " "},
+				{Type: Word, Value: "am"},
+				{Type: Whitespace, Value: " "},
+				{Type: Quote, Value: "'"},
+				{Type: Whitespace, Value: " "},
+				{Type: Word, Value: "awesome"},
+				{Type: Whitespace, Value: " "},
+				{Type: Quote, Value: "'"},
+			},
+		},
 	}
 
 	for _, tt := range tests {

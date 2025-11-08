@@ -13,6 +13,7 @@ const (
 	Word TokenType = iota
 	Punctuation
 	Command
+	Quote
 	Whitespace
 )
 
@@ -46,10 +47,11 @@ func Tokenize(text string) []Token {
 			continue
 		}
 		
-		// Check for quotes (before other punctuation)
+		// Check for quotes
 		if quoteMatch := quotePattern.FindStringIndex(text[i:]); quoteMatch != nil && quoteMatch[0] == 0 {
-			tokens = append(tokens, Token{Type: Punctuation, Value: "'"})
-			i += 1
+			quoteText := text[i : i+quoteMatch[1]]
+			tokens = append(tokens, Token{Type: Quote, Value: quoteText})
+			i += quoteMatch[1]
 			continue
 		}
 		
