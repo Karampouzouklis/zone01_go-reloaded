@@ -26,13 +26,11 @@ func processNumberConversion(tokens []tokenizer.Token) []tokenizer.Token {
 		token := tokens[i]
 
 		if token.Type == tokenizer.Command && (token.Command == "hex" || token.Command == "bin") {
-			// Find the previous word token (skip whitespace)
+			// Find the previous word token (ignore all non-word tokens)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
 				if tokens[j].Type == tokenizer.Word {
 					wordIndex = j
-					break
-				} else if tokens[j].Type != tokenizer.Whitespace {
 					break
 				}
 			}
@@ -85,13 +83,11 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 		token := tokens[i]
 
 		if token.Type == tokenizer.Command && (token.Command == "up" || token.Command == "low" || token.Command == "cap") {
-			// Find the previous word token (skip whitespace and quotes)
+			// Find the previous word token (ignore all non-word tokens)
 			wordIndex := -1
 			for j := i - 1; j >= 0; j-- {
 				if tokens[j].Type == tokenizer.Word {
 					wordIndex = j
-					break
-				} else if tokens[j].Type != tokenizer.Whitespace && tokens[j].Type != tokenizer.Quote {
 					break
 				}
 			}
@@ -108,7 +104,7 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 					result = result[:len(result)-1]
 				}
 
-				// Transform the specified number of words backward (skip quotes and whitespace)
+				// Transform the specified number of words backward (only process Word tokens)
 				wordsTransformed := 0
 				for k := len(result) - 1; k >= 0 && wordsTransformed < count; k-- {
 					if result[k].Type == tokenizer.Word {
@@ -134,7 +130,6 @@ func processCaseTransformations(tokens []tokenizer.Token) []tokenizer.Token {
 						}
 						wordsTransformed++
 					}
-					// Skip quotes and whitespace when counting backward
 				}
 
 				// Skip the marker
@@ -186,8 +181,8 @@ func processPunctuation(tokens []tokenizer.Token) []tokenizer.Token {
 			// Add the punctuation group as single token
 			result = append(result, tokenizer.Token{Type: tokenizer.Punctuation, Value: punctGroup})
 
-			// Add single space after punctuation group if there's a following word
-			if j < len(tokens) && tokens[j].Type != tokenizer.Whitespace {
+			// Add single space after punctuation group if the next token is not whitespace and not a quote
+			if j < len(tokens) && tokens[j].Type != tokenizer.Whitespace && tokens[j].Type != tokenizer.Quote {
 				result = append(result, tokenizer.Token{Type: tokenizer.Whitespace, Value: " "})
 			}
 
@@ -269,13 +264,11 @@ func processArticles(tokens []tokenizer.Token) []tokenizer.Token {
 
 	for i, token := range tokens {
 		if token.Type == tokenizer.Word && (token.Value == "a" || token.Value == "A") {
-			// Look for next word (skip whitespace)
+			// Look for next word (ignore all non-word tokens)
 			nextWordIndex := -1
 			for j := i + 1; j < len(tokens); j++ {
 				if tokens[j].Type == tokenizer.Word {
 					nextWordIndex = j
-					break
-				} else if tokens[j].Type != tokenizer.Whitespace {
 					break
 				}
 			}
