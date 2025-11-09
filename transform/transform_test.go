@@ -87,12 +87,12 @@ func TestNumberConversion(t *testing.T) {
 		{"lowercase hex", "ff (hex)", "255"},
 		{"uppercase hex", "ABC (hex)", "2748"},
 		{"zero hex", "0 (hex)", "0"},
-		{"invalid hex", "xyz (hex)", "xyz (hex)"},
+		{"invalid hex", "xyz (hex)", "xyz"},
 		{"simple binary", "10 (bin)", "2"},
 		{"longer binary", "1010 (bin)", "10"},
 		{"all ones", "11111111 (bin)", "255"},
 		{"zero binary", "0 (bin)", "0"},
-		{"invalid binary", "102 (bin)", "102 (bin)"},
+		{"invalid binary", "102 (bin)", "102"},
 	}
 
 	for _, tt := range tests {

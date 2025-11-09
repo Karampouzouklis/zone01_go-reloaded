@@ -27,7 +27,8 @@ type Token struct {
 
 // Tokenize splits input text into tokens
 func Tokenize(text string) []Token {
-	var tokens []Token
+	// Pre-allocate with estimated capacity (roughly 1 token per 10 characters)
+	tokens := make([]Token, 0, len(text)/10+10)
 	
 	// Regex patterns
 	commandPattern := regexp.MustCompile(`\([a-z]+(?:,\s*\d+)?\)`)

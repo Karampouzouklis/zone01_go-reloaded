@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"go-reloaded/tokenizer"
 	"go-reloaded/transform"
 )
@@ -35,11 +36,13 @@ func run(args []string) error {
 	// Apply transformations
 	tokens = transform.ProcessTokens(tokens)
 	
-	// Reconstruct text from transformed tokens
-	result := ""
+	// Reconstruct text from transformed tokens using string builder
+	var builder strings.Builder
+	builder.Grow(len(content)) // Pre-allocate based on input size
 	for _, token := range tokens {
-		result += token.Value
+		builder.WriteString(token.Value)
 	}
+	result := builder.String()
 	
 	// Write to output file
 	err = os.WriteFile(outputFile, []byte(result), 0644)
